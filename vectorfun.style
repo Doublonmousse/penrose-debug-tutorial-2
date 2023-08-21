@@ -1,0 +1,116 @@
+
+canvas {
+    width = 800
+    height = 700
+}
+
+
+
+const {
+    scalar VectorSpaceSize = 350.0
+    scalar arrowheadSize = 0.7
+    scalar lineThickness = 1.
+    scalar arrowThickness = 1.5
+    color gray = rgba(0.6, 0.6, 0.6, 1.)
+    color lightBlue = rgba(0.2, 0.4, 0.8, 1.0)
+    color lightGray = rgba(252, 252, 252, 0.015)
+    color green = rgba(0., 0.8, 0., 1.)
+    color none = rgba(0., 0., 0., 0.)
+    color red = rgba(1,0,0,1)
+}
+
+forall VectorSpace U {
+    scalar axisSize = const.VectorSpaceSize / 2.0 
+    vec2 U.origin = (0.,0.) 
+    vec2 o = U.origin 
+    U.axisColor = const.gray 
+
+    -- Background
+    U.Background = Rectangle {
+        center: o
+        width: const.VectorSpaceSize
+        height: const.VectorSpaceSize
+        fillColor: const.lightGray
+        strokeColor: const.none
+    }
+
+    -- Axis
+    U.xaxis = Line {
+        start: (o[0]-axisSize, o[1])
+        end: (o[0]+axisSize,o[1])
+        strokeWidth : const.lineThickness
+        style : "solid"
+        strokeColor : U.axisColor
+        startArrowhead: "straight" -->
+        endArrowhead: "straight"
+        startArrowheadSize : const.arrowheadSize * 2. 
+        endArrowheadSize : const.arrowheadSize * 2.
+    }
+
+    -- Y axisx
+    U.yaxis = Line {
+        start: (o[0], o[1]-axisSize)
+        end: (o[0],o[1]+axisSize)
+        strokeWidth : const.lineThickness
+        style : "solid"
+        strokeColor : U.axisColor
+        startArrowhead: "straight" -->
+        endArrowhead: "straight"
+        startArrowheadSize : const.arrowheadSize * 2. 
+        endArrowheadSize : const.arrowheadSize * 2.
+    }
+
+    U.text = Equation {
+        string: U.label 
+        center: (o[0] - axisSize, o[1]+axisSize)
+        fillColor: U.axisColor
+    }
+} 
+forall Vector u; VectorSpace U 
+where In(u,U) {
+  /* draw a vector in vector space */
+  u.vector = (?,?) 
+
+  u.shape = Line {
+    start: U.origin
+    end: u.vector
+    endArrowhead: "straight"
+    strokeColor : const.lightBlue /* or any color you want */
+    endArrowheadSize : const.arrowheadSize * 2.
+    strokeWidth : 1 -- largeur, bug, strokewidth tied to arrowheadsize
+  }
+
+  u.text = Equation {
+    string : u.label 
+    fillColor : u.shape.strokeColor /* this way it changes accordingly when we change the arrow's color */
+    }
+
+    -- constraints : given enough constraints, impossible to use ? for the scalar value
+    ensure contains(U.Background,u.shape)
+    ensure contains(U.Background,u.text) 
+    ensure disjoint(u.shape,u.text)
+    ensure vdist(u.shape.end, u.text.center) < 20
+    ensure disjoint(u.shape,u.text, 10.0)
+    
+    layer u.text above U.xaxis
+    layer u.text above U.yaxis
+}
+
+
+-- definition des scalaires
+forall Scalar a {
+    a.scalar = ?
+    --a.scalar = 5 -- if the scalar value is not set to a random one but fixed, can get the compiler to run 
+    ensure inRange(a.scalar,2.,5.)
+}
+
+-- definition de la multiplication
+forall Vector u; Scalar a; Vector v; VectorSpace U
+where u := multiply(a,v); In(u,U); In(v,U) {
+---    override u.vector = (a.scalar * v.vector[0], a.scalar * v.vector[1])
+---    override u.vector = (a.scalar * v.vector)
+---    override u.shape.end = a.scalar * (v.shape.end - U.origin) + U.origin
+---    override u.shape.end = (a.scalar * (v.shape.end[0]- U.origin[0]) + U.origin[0],a.scalar * (v.shape.end[1]- U.origin[1]) + U.origin[1])
+
+    override u.shape.strokeColor = const.red
+}

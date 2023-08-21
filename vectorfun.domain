@@ -1,0 +1,6 @@
+
+type VectorSpace
+type Vector
+type Scalar
+predicate In(Vector,VectorSpace)
+function multiply(Scalar,Vector) -> Vector

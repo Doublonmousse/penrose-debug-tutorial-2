@@ -1,0 +1,11 @@
+
+VectorSpace U
+Vector v
+In(v,U)
+
+Scalar a
+
+Vector u := multiply(a,v) --declare y = f (x,z)
+In(u, U) 
+
+AutoLabel All /* leave this as the last line */ 
