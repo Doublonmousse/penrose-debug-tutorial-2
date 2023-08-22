@@ -107,7 +107,7 @@ forall Scalar a {
 -- definition de la multiplication
 forall Vector u; Scalar a; Vector v; VectorSpace U
 where u := multiply(a,v); In(u,U); In(v,U) {
----    override u.vector = (a.scalar * v.vector[0], a.scalar * v.vector[1])
+    override u.vector = (a.scalar * v.vector[0], a.scalar * v.vector[1])
 ---    override u.vector = (a.scalar * v.vector)
 ---    override u.shape.end = a.scalar * (v.shape.end - U.origin) + U.origin
 ---    override u.shape.end = (a.scalar * (v.shape.end[0]- U.origin[0]) + U.origin[0],a.scalar * (v.shape.end[1]- U.origin[1]) + U.origin[1])
